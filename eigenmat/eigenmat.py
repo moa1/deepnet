@@ -200,7 +200,14 @@ class EigenMatrix(object):
     """
     Copies the matrix to an ndarray on the CPU and returns it.
     """
-    return self.numpy_array
+    m,n = self.shape
+    array = np.zeros((m,n), dtype=np.float32, order='F')
+    #array = reformat(array)
+    
+    _eigenmat.copy_to_array(self.p_mat, array.ctypes.data_as(ct.POINTER(ct.c_float)), ct.c_int(array.shape[0]), ct.c_int(array.shape[1]))
+    
+    return array
+    #return self.numpy_array
 
   def copy_to_device(self):
     """

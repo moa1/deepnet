@@ -170,6 +170,21 @@ extern int init_empty(eigenmat* mat, int m, int n) {
   return allocate_memory(mat);
 }
 
+extern int copy_to_array(eigenmat* mat, float* data, int m, int n) {
+  const unsigned int h = mat->size[0], w = mat->size[1];
+  assert(h == m && w == n);
+
+  // consider mat->is_trans ?
+  for (int i = 0; i < w; i++) {
+    const float *mat_data = &mat->data[i * h];
+    float *target_data = &data[i * h];
+    for (int j = 0; j < h; j++)
+      target_data[j] =  mat_data[j];
+  }
+
+  return 0;
+}
+
 /* ------------------------------ Random number generation ------------------------------ */
 
 extern float uniform(rnd_struct* rnd_state) {
