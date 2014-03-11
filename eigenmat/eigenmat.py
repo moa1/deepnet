@@ -200,14 +200,7 @@ class EigenMatrix(object):
     """
     Copies the matrix to an ndarray on the CPU and returns it.
     """
-    m,n = self.shape
-    array = np.zeros((m,n), dtype=np.float32, order='F')
-    #array = reformat(array)
-    
-    _eigenmat.copy_to_array(self.p_mat, array.ctypes.data_as(ct.POINTER(ct.c_float)), ct.c_int(array.shape[0]), ct.c_int(array.shape[1]))
-    
-    return array
-    #return self.numpy_array
+    return asarray(self)
 
   def copy_to_device(self):
     """
@@ -1375,6 +1368,18 @@ def sum(mat, axis, target=None):
     raise generate_exception(err_code)
 
   return target
+
+def asarray(ma):
+  #m,n = ma.shape
+  m = _eigenmat.get_leading_dimension(ma.p_mat)
+  n = _eigenmat.get_nonleading_dimension(ma.p_mat)
+  array = np.zeros((m,n), dtype=np.float32, order='F')
+
+  err_code = _eigenmat.copy_to_array(ma.p_mat, array.ctypes.data_as(ct.POINTER(ct.c_float)), ct.c_int(array.shape[0]), ct.c_int(array.shape[1]))
+  if err_code:
+    raise generate_exception(err_code)
+
+  return array
 
 def dot(m1, m2, mult=1.0, target=None):
   """

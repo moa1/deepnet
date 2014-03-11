@@ -172,14 +172,34 @@ extern int init_empty(eigenmat* mat, int m, int n) {
 
 extern int copy_to_array(eigenmat* mat, float* data, int m, int n) {
   const unsigned int h = mat->size[0], w = mat->size[1];
-  assert(h == m && w == n);
+  
+//  assert(h == m && w == n);
+  if (!mat->is_trans && (h != m || w != n))
+    return ERROR_INCOMPATIBLE_DIMENSIONS;
+  else if (mat->is_trans && (h != n || w != m))
+    return ERROR_INCOMPATIBLE_DIMENSIONS;
 
-  // consider mat->is_trans ?
-  for (int i = 0; i < w; i++) {
-    const float *mat_data = &mat->data[i * h];
-    float *target_data = &data[i * h];
-    for (int j = 0; j < h; j++)
-      target_data[j] =  mat_data[j];
+  if (!mat->is_trans) {
+    for (int i = 0; i < w; i++) {
+      const float *mat_data = &mat->data[i * h];
+      float *target_data = &data[i * h];
+      for (int j = 0; j < h; j++)
+        target_data[j] =  mat_data[j];
+    }
+  } else {
+    // w=2, h=4
+    // 0 4
+    // 1 5
+    // 2 6
+    // 3 7
+    
+    // 0 2 4 6
+    // 1 3 5 7
+    for (int i = 0; i < w; i++) {
+      const float *mat_data = &mat->data[i * h];
+      for (int j = 0; j < h; j++)
+        data[j*w + i] = mat_data[j];
+    }
   }
 
   return 0;
