@@ -8,6 +8,8 @@ import numpy as np
 from time import sleep
 
 def LockGPU(max_retries=10):
+  if use_gpu == 'no': return None
+
   for retry_count in range(max_retries):
     board = gpu_lock.obtain_lock_id()
     if board != -1:
@@ -22,6 +24,8 @@ def LockGPU(max_retries=10):
   return board
 
 def FreeGPU(board):
+  if use_gpu == 'no': return
+
   cm.cublas_shutdown()
   #gpu_lock.free_lock(board)
 
