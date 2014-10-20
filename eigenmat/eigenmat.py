@@ -56,7 +56,8 @@ def generate_exception(err_code):
     return EigenMatException("Matrix is not in device memory.")
   elif err_code == -9:
     return EigenMatException("Operation not supported.")
-    
+  else:
+    return Exception("unknown err_code:",err_code)
 
 class eigenmat(ct.Structure):
   _fields_ = [('data', ct.POINTER(ct.c_float)),
