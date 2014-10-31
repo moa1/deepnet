@@ -13,8 +13,8 @@ else
 	LIB_NAME := libeigenmat.dll
 endif
 endif
-all: eigenmat.cc eigenmat.h ziggurat.cc ziggurat.h
-	g++ $(CCFLAGS) $(INCLUDE) -o $(LIB_NAME) eigenmat.cc ziggurat.cc
+all: eigenmat.cc eigenmat.h ziggurat.cpp ziggurat.hpp
+	g++ $(CCFLAGS) $(INCLUDE) -o $(LIB_NAME) eigenmat.cc ziggurat.cpp
 
 clean:
 	rm -rf *.linkinfo *.pyc *.so

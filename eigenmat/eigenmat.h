@@ -1,3 +1,5 @@
+#include <inttypes.h>
+
 #define ERROR_INCOMPATIBLE_DIMENSIONS -1
 #define CUBLAS_ERROR -2
 #define CUDA_ERROR -3
@@ -16,8 +18,8 @@ struct eigenmat {
 };
 
 struct rnd_struct {
-  unsigned long seed;
-  int kn[128];
+  uint32_t seed;
+  uint32_t kn[128];
   float fn[128], wn[128];
 };
 

@@ -2,7 +2,7 @@
 #include <stdlib.h>
 #include <Eigen/Dense>
 #include "eigenmat.h"
-#include "ziggurat.h"
+#include "ziggurat.hpp"
 
 extern "C" {
 
@@ -208,11 +208,11 @@ extern int copy_to_array(eigenmat* mat, float* data, int m, int n) {
 /* ------------------------------ Random number generation ------------------------------ */
 
 extern float uniform(rnd_struct* rnd_state) {
-  return r4_uni(&rnd_state->seed);
+  return r4_uni(rnd_state->seed);
 }
 
 extern float normal(rnd_struct* rnd_state) {
-  return r4_nor(&rnd_state->seed, rnd_state->kn, rnd_state->fn, rnd_state->wn);
+  return r4_nor(rnd_state->seed, rnd_state->kn, rnd_state->fn, rnd_state->wn);
 }
 
 extern int fill_with_rand(rnd_struct* rnd_state, eigenmat* mat) {
@@ -798,7 +798,25 @@ extern int normlimit_by_axis(eigenmat* mat, eigenmat* target, int axis,
   unsigned int h = mat->size[0],
          w = mat->size[1];
 
-  return 1;
+  if (target->size[0] != h || target->size[1] != w)
+    return ERROR_INCOMPATIBLE_DIMENSIONS;
+
+  for (unsigned int column=0; column < w; column++) {
+    float cur_sum = 0;
+    float *cur_data = &mat->data[column * h]; 
+    for (unsigned int i=0; i<h; i++) {
+      float e = cur_data[i];
+      cur_sum += e*e;
+    }
+    cur_sum = sqrt(cur_sum);
+    cur_sum = (cur_sum < norm) ? 1: (norm / cur_sum);
+    float *target_data = &target->data[column * h] ; 
+    for (unsigned int i=0; i<h; i++) {
+      target_data[i] = cur_data[i] * cur_sum;
+    }
+  }
+  
+  return 0;
 }
 
 
