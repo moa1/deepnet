@@ -9,6 +9,7 @@ import scipy.sparse as sp
 import pdb
 import gzip
 import random
+import sys
 
 class Disk(object):
   """A Disk access manager."""
@@ -522,7 +523,13 @@ class DataHandler(object):
     for name, hyp in zip(data_name_list, hyperparameter_list):
       data_proto = next(d for d in dataset_proto.data if d.name == name)
       file_pattern = os.path.join(dataset_proto.prefix, data_proto.file_pattern)
-      filenames.append(sorted(glob.glob(file_pattern)))
+      file_glob = sorted(glob.glob(file_pattern)) 
+      if len(file_glob)==0:
+          print "Could not find data files:"
+          print "file_pattern", file_pattern
+          print "file_glob",file_glob
+          sys.exit(1)
+      filenames.append(file_glob)
       stats_files.append(os.path.join(dataset_proto.prefix, data_proto.stats_file))
       numdims = np.prod(np.array(data_proto.dimensions))
       if not data_proto.sparse:
