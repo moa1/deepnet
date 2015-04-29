@@ -1236,7 +1236,7 @@ class EigenMatrix(object):
     This does bounds checking, but out of bounds indices do not raise an exception (because the programmer was lazy). Instead, they result in NaN values in <target>.
     """
 
-    err_code = _eigenmat.selectRows(self.p_mat, target.p_mat, indices.p_mat)
+    err_code = _eigenmat.selectCols(self.p_mat, target.p_mat, indices.p_mat)
 
     if err_code:
       raise generate_exception(err_code)
